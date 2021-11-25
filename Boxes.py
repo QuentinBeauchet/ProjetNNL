@@ -1,9 +1,6 @@
 from PopUp import PopUp
 from Box import Box
 from shapely.geometry import Point
-from tkinter import Button
-import cv2
-
 class Boxes:
     def __init__(self,canvas):
         self.boxes = []
@@ -75,10 +72,3 @@ class Boxes:
                 if(20 < percent < 100):
                     box1.clear()
                     self.boxes.remove(box1)
-
-    def save(self):
-        img = cv2.imread("dessin.jpg")
-        crop_img = img[self.currentBox.y1:self.currentBox.y2, self.currentBox.x1:self.currentBox.x2].copy()
-        cv2.imwrite("save/" + str(self.currentBox.x1) + ".png", crop_img)
-        self.makeJson()
-        print('Successfully saved')

@@ -2,6 +2,7 @@ from tkinter import *
 from PIL import ImageTk, Image
 import json
 import csv
+import cv2
 from Boxes import Boxes
 from ModifyCategoriesPopUp import ModifyCategoriesPopUp
 
@@ -34,12 +35,21 @@ def jsonToCsv(json):
             count += 1
         csv_writer.writerow(emp.values())
     data_file.close()
+    print("SAVED")
+
+def save(boxes):
+    img = cv2.imread("dessin.jpg")
+    for i in range(len(boxes.boxes)):
+        x1,y1,x2,y2 = boxes.boxes[i].coords()
+        crop_img = img[int(y1):int(y2), int(x1):int(x2)].copy()
+        cv2.imwrite("save/" + str(i) + ".png", crop_img)
+    makeJson(boxes.boxes)
           
 boxes = Boxes(canvas)
 my_menu = Menu(root)
 
 file_menu = Menu(my_menu)
-file_menu.add_command(label="Save", command= lambda: boxes.save())
+file_menu.add_command(label="Save", command = lambda:save(boxes))
 file_menu.add_command(label="Import")
 my_menu.add_cascade(label="File",menu=file_menu)
 
