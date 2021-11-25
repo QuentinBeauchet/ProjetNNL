@@ -1,7 +1,7 @@
 from tkinter import *
 import tkinter  
 from PIL import ImageTk, Image  
-
+import platform
 root = Tk()
 root.title("ImageAnnotator")
 img = ImageTk.PhotoImage(Image.open("dessin.jpg"))  
@@ -88,7 +88,10 @@ class PopUp:
     def __init__(self):
         self.canvas = Toplevel(root, borderwidth=3, relief="ridge")
         self.canvas.geometry("100x170")
-        self.canvas.wm_attributes('-type', 'splash','-topmost', True)
+        if(platform.system() == "Windows"):
+            self.canvas.wm_attributes('-topmost', True)
+        else:
+            self.canvas.wm_attributes('-type', 'splash','-topmost', True)
         self.canvas.grid_rowconfigure(0,weight=1)
         self.canvas.grid_columnconfigure(0,weight=1)
         self.canvas.wait_visibility()
@@ -118,5 +121,4 @@ root.bind('<Button-1>', boxes.click)
 root.bind('<ButtonRelease-1>',boxes.release)
 root.bind('<B1-Motion>', boxes.move)
 root.bind('<Button-3>',boxes.change)
-
 root.mainloop() 
