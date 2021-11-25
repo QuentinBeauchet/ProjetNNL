@@ -40,7 +40,7 @@ class Boxes:
     def __init__(self):
         self.boxes = []
         self.currentBox = None
-        self.q = self.infinite()
+        self.index = self.infinite()
 
     def click(self,event):
         self.currentBox = Box()
@@ -103,13 +103,13 @@ class Boxes:
         print('Successfully saved')
 
     def makeJson(self):
-        d = dict()
-        d['box'] = []
+        json_file = dict()
+        json_file['box'] = []
         for i in self.boxes:
-            d['box'].append({"index" : next(self.q), "x1" : i.x1, "x2" : i.x2, "y1" : i.y1, "y2" :i.y2, "categories" : i.categorie})
+            json_file['box'].append({"index" : next(self.index), "x1" : i.x1, "x2" : i.x2, "y1" : i.y1, "y2" :i.y2, "categories" : i.categorie})
         with open('data.json', 'w') as outfile:
-            json.dump(d, outfile)
-        jsonToCsv(d)
+            json.dump(json_file, outfile)
+        jsonToCsv(json_file)
 
         
 class PopUp:
