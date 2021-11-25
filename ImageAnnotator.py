@@ -54,9 +54,7 @@ file_menu.add_command(label="Import")
 my_menu.add_cascade(label="File",menu=file_menu)
 
 def popUpCategories():
-    popUp = ModifyCategoriesPopUp(canvas, boxes)
-    popUp.setWindow()
-    popUp.setButton()
+    ModifyCategoriesPopUp(canvas, boxes)
 
 edit_menu = Menu(my_menu)
 edit_menu.add_command(label="Modify Categories",command=lambda:popUpCategories())
