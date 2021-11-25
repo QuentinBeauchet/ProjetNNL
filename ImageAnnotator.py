@@ -2,6 +2,7 @@ from tkinter import *
 import tkinter  
 from PIL import ImageTk, Image  
 import platform
+import cv2
 root = Tk()
 root.title("ImageAnnotator")
 img = ImageTk.PhotoImage(Image.open("dessin.jpg"))  
@@ -84,6 +85,12 @@ class Boxes:
         for box in self.boxes:
             box.draw()
 
+    def save(self):
+        
+        img = cv2.imread("dessin.jpg")
+        crop_img = img[self.currentBox.y1:self.currentBox.y2, self.currentBox.x1:self.currentBox.x2].copy()
+        cv2.imwrite("save/" + str(self.currentBox.x1) + ".png", crop_img)
+        print('Successfully saved')
 class PopUp:
     def __init__(self):
         self.canvas = Toplevel(root, borderwidth=3, relief="ridge")
@@ -109,7 +116,8 @@ class PopUp:
 
     def setButtons(self,boxes):
         Button(self.canvas, text ="OK", command = boxes.set).grid(row=2, column=0)
-        Button(self.canvas, text ="DEL", command = boxes.delete).grid(row=2, column=1)
+        Button(self.canvas, text ="SAVE", command = boxes.save).grid(row=2, column=1)
+        Button(self.canvas, text ="DEL", command = boxes.delete).grid(row=2, column=2)
 
     def clear(self):
         self.canvas.destroy()
