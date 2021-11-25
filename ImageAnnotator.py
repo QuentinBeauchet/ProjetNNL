@@ -40,7 +40,6 @@ class Boxes:
     def __init__(self):
         self.boxes = []
         self.currentBox = None
-        self.index = self.infinite()
 
     def click(self,event):
         self.currentBox = Box()
@@ -90,11 +89,6 @@ class Boxes:
         for box in self.boxes:
             box.draw()
 
-    def infinite(self):
-        n = 0
-        while True:
-            yield n
-            n += 1
     def save(self):
         img = cv2.imread("dessin.jpg")
         crop_img = img[self.currentBox.y1:self.currentBox.y2, self.currentBox.x1:self.currentBox.x2].copy()
@@ -106,7 +100,7 @@ class Boxes:
         json_file = dict()
         json_file['box'] = []
         for i in self.boxes:
-            json_file['box'].append({"index" : next(self.index), "x1" : i.x1, "x2" : i.x2, "y1" : i.y1, "y2" :i.y2, "categories" : i.categorie})
+            json_file['box'].append({"index" : self.boxes.index(i), "x1" : i.x1, "x2" : i.x2, "y1" : i.y1, "y2" :i.y2, "categories" : i.categorie})
         with open('data.json', 'w') as outfile:
             json.dump(json_file, outfile)
         jsonToCsv(json_file)
