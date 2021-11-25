@@ -63,9 +63,9 @@ class Boxes:
 
     def delete(self):
         self.popup.clear()
+        self.boxes.remove(self.currentBox)
         self.currentBox.clear()
         self.currentBox = None
-        self.boxes.pop()
 
     def change(self,event):
         for boxe in self.boxes:
