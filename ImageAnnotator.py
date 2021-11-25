@@ -3,6 +3,8 @@ import tkinter
 from PIL import ImageTk, Image  
 import platform
 import cv2
+import json
+import csv
 root = Tk()
 root.title("ImageAnnotator")
 img = ImageTk.PhotoImage(Image.open("dessin.jpg"))  
@@ -33,9 +35,12 @@ class Box:
             self.rect = canvas.create_rectangle(self.x1, self.y1, self.x2, self.y2, outline=outline, width=3)
 
 class Boxes:
+    
+
     def __init__(self):
         self.boxes = []
         self.currentBox = None
+        self.q = self.infinite()
 
     def click(self,event):
         self.currentBox = Box()
@@ -85,12 +90,28 @@ class Boxes:
         for box in self.boxes:
             box.draw()
 
+    def infinite(self):
+        n = 0
+        while True:
+            yield n
+            n += 1
     def save(self):
-        
         img = cv2.imread("dessin.jpg")
         crop_img = img[self.currentBox.y1:self.currentBox.y2, self.currentBox.x1:self.currentBox.x2].copy()
         cv2.imwrite("save/" + str(self.currentBox.x1) + ".png", crop_img)
+        self.makeJson()
         print('Successfully saved')
+
+    def makeJson(self):
+        d = dict()
+        d['box'] = []
+        for i in self.boxes:
+            d['box'].append({"index" : next(self.q), "x1" : i.x1, "x2" : i.x2, "y1" : i.y1, "y2" :i.y2, "categories" : i.categorie})
+        with open('data.json', 'w') as outfile:
+            json.dump(d, outfile)
+        jsonToCsv(d)
+
+        
 class PopUp:
     def __init__(self):
         self.canvas = Toplevel(root, borderwidth=3, relief="ridge")
@@ -122,7 +143,29 @@ class PopUp:
     def clear(self):
         self.canvas.destroy()
         self.canvas.grab_release()
-            
+
+
+
+def jsonToCsv(json):
+     # now we will open a file for writing
+        data_file = open('data_file.csv', 'w', newline='')
+        
+        # create the csv writer object
+        csv_writer = csv.writer(data_file)
+        count = 0
+ 
+        for emp in json['box']:
+            if count == 0:
+        
+            # Writing headers of CSV file
+                header = emp.keys()
+                csv_writer.writerow(header)
+                count += 1
+    
+            # Writing data of CSV file
+            csv_writer.writerow(emp.values())
+        data_file.close()    
+          
 boxes = Boxes()
 
 root.bind('<Button-1>', boxes.click)
