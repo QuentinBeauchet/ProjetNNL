@@ -8,6 +8,7 @@ class Boxes:
     def __init__(self,canvas):
         self.boxes = []
         self.currentBox = None
+        self.categories = ["one", "two", "three"]
         self.canvas = canvas
 
     def click(self,event):
@@ -30,7 +31,7 @@ class Boxes:
     def popUp(self,default="one"):
         self.popup = PopUp(self.canvas)
         self.popup.setText(self.currentBox)
-        self.popup.setOptionBar(default,["one", "two", "three"])
+        self.popup.setOptionBar(default,self.categories)
         self.popup.setButtons(self)
 
     def set(self):
