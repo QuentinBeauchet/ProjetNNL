@@ -43,7 +43,7 @@ class ImageAnnotator:
         self.menuEdit = Menu(self.menu, tearoff=0)
         self.menuEdit.add_command(label="Modify Categories", command = self.popUpCategories)
         self.menuEdit.add_command(label="Import Categories", command = self.importCategories)
-        self.menuEdit.add_command(label="Clear Boxes", command = self.boxes.clear)
+        self.menuEdit.add_command(label="Resolve conflicts", command = self.boxes.clear)
         self.menu.add_cascade(label="Edit",menu=self.menuEdit)
 
         self.root.config(menu=self.menu)
@@ -53,7 +53,6 @@ class ImageAnnotator:
         self.root.bind('<ButtonRelease-1>',self.boxes.release)
         self.root.bind('<B1-Motion>', self.boxes.move)
         self.root.bind('<Button-3>',self.boxes.change)
-        self.root.bind('<space>', self.boxes.clear)
 
     def popUpCategories(self):
         ModifyCategoriesPopUp(self.canvas, self.boxes)
