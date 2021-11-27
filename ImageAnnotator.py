@@ -5,7 +5,6 @@ import cv2
 import pandas as pd
 from Boxes import Boxes
 from ModifyCategoriesPopUp import ModifyCategoriesPopUp
-from sys import platform
 
 class ImageAnnotator:
     def __init__(self):
@@ -60,11 +59,11 @@ class ImageAnnotator:
         ModifyCategoriesPopUp(self.canvas, self.boxes)
 
     def save(self):
-        img = cv2.imread("dessin.jpg")
+        img = cv2.imread(self.imgPath)
         for i in range(len(self.boxes.boxes)):
             x1,y1,x2,y2 = self.boxes.boxes[i].coords()
-            crop_img = img[int(y2):int(y1), int(x2):int(x1)].copy()
-            cv2.imwrite("save/" + str(i) + ".png", crop_img)
+            crop_img = img[int(min(y1,y2)):int(max(y1,y2)), int(min(x1,x2)):int(max(x1,x2))].copy()
+            cv2.imwrite("save/{}.png".format(i), crop_img)
         self.writeFiles()
 
     def writeFiles(self):
