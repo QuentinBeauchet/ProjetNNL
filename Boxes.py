@@ -1,6 +1,8 @@
 from PopUp import PopUp
 from Box import Box
 from shapely.geometry import Point
+from shapely.geometry import box
+
 class Boxes:
     def __init__(self,canvas):
         self.boxes = []
@@ -20,6 +22,13 @@ class Boxes:
         else:
             self.currentBox.clear()
             self.currentBox = None
+
+    def addBox(self, x1,x2,y1,y2,categorie):
+        boxe = Box(self.canvas)
+        boxe.polygon = box(x1, y1, x2, y2)
+        boxe.categorie = categorie
+        self.boxes.append(boxe)
+        boxe.draw('black')
 
     def move(self,event):
         if(self.currentBox is not None):
