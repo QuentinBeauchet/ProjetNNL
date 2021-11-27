@@ -42,7 +42,7 @@ class ImageAnnotator:
 
         self.menuEdit = Menu(self.menu, tearoff=0)
         self.menuEdit.add_command(label="Modify Categories", command = self.popUpCategories)
-        self.menuEdit.add_command(label="Import Categories")
+        self.menuEdit.add_command(label="Import Categories", command = self.importCategories)
         self.menuEdit.add_command(label="Clear Boxes", command = self.boxes.clear)
         self.menu.add_cascade(label="Edit",menu=self.menuEdit)
 
@@ -74,5 +74,15 @@ class ImageAnnotator:
         df = pd.DataFrame(jsonArray)
         df.to_json('data.json', orient = 'records')
         df.to_csv('data.csv')
+
+    def importCategories(self):
+        filePath = askopenfilename(filetypes=[("CSV or JSON Files", ".csv .json")])
+        if filePath.endswith(".csv") :
+            data = pd.read_csv(filePath)
+            self.boxes.categories = data.iloc[:,1].tolist()
+        else :
+            data = pd.read_json(filePath)
+            self.boxes.categories = data.iloc[:,0].tolist()
+
 
 ImageAnnotator()
