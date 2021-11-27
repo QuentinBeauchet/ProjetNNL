@@ -65,6 +65,8 @@ class ModifyCategoriesPopUp:
             self.lbx.delete(index)
             self.lbx.insert(index,text)
             self.lbx.select_set(index)
+            self.boxes.notifyCategoryModification(self.boxes.categories[index[0]],text)
+            self.boxes.categories[index[0]] = text
             self.my_text.delete(1.0, END)
 
     def handle_focus_in(self):
@@ -90,6 +92,7 @@ class ModifyCategoriesPopUp:
     def deleteCategory(self):
         index = self.lbx.curselection()
         if index != ():
+            self.boxes.notifyCategoryDeletion(self.boxes.categories[index[0]])
             self.boxes.categories.pop(index[0])
             self.lbx.delete(index)
             self.buttonDelete["state"] = "disabled"

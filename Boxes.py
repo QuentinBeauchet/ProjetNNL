@@ -55,6 +55,16 @@ class Boxes:
         for box in self.boxes:
             box.draw()
 
+    def notifyCategoryDeletion(self,category):
+        for boxe in self.boxes :
+            if(boxe.categorie == category) :
+                boxe.categorie = None
+
+    def notifyCategoryModification(self, oldCategory, newCategory):
+        for boxe in self.boxes:
+            if (boxe.categorie == oldCategory):
+                boxe.categorie = newCategory
+
     def clear(self):
         self.boxes.sort(reverse=True)
         for box1 in self.boxes:
