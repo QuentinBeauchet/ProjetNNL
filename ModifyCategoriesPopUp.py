@@ -9,12 +9,17 @@ class ModifyCategoriesPopUp:
         self.fr = Frame(self.popup)
         self.fr.pack()
         self.my_text = Text(self.popup,width =20, height=1)
-        self.my_text.pack()
-        self.lbx = Listbox(self.fr, selectmode = EXTENDED,font = ("Verdana",16))
+        self.my_text.pack(pady=5)
+        self.lbx = Listbox(self.fr, width =20, selectmode = EXTENDED,font = ("Verdana",16))
         self.lbx.bind('<<ListboxSelect>>', self.onselect)
         self.categories = boxes.categories
 
         self.my_text.bind('<Return>', lambda x=None:self.addCategory())
+        self.my_text.config(fg='grey')
+        self.my_text.insert(1.0,"Type category... ")
+        self.my_text.bind("<FocusIn>", lambda x=None:self.handle_focus_in())
+        #self.my_text.bind("<FocusOut>", lambda x=None: self.handle_focus_out())
+        # self.my_text.bind("<Return>", self.handle_enter)
 
         self.lbx.pack(side=LEFT, fill="both", expand=True)
         for i in range(len(self.categories)):
@@ -24,8 +29,9 @@ class ModifyCategoriesPopUp:
         sbr.config(command=self.lbx.yview)
         self.lbx.config(yscrollcommand=sbr.set)
 
+        frameButton = Frame(self.popup)
         self.buttonDelete = Button(
-            self.popup,
+            frameButton,
             text="Delete",
             font=("Verdana", 16),
             command=lambda: self.deleteCategory()
@@ -34,7 +40,7 @@ class ModifyCategoriesPopUp:
         self.buttonDelete["state"] = "disabled"
 
         self.buttonAdd = Button(
-            self.popup,
+            frameButton,
             text="Add",
             font=("Verdana", 16),
             command=lambda: self.addCategory()
@@ -42,13 +48,14 @@ class ModifyCategoriesPopUp:
         self.buttonAdd.pack(side=LEFT)
 
         self.buttonModify = Button(
-            self.popup,
+            frameButton,
             text="Modify",
             font=("Verdana", 16),
             command=lambda: self.modifyCategory()
         )
         self.buttonModify.pack(side=LEFT)
         self.buttonModify["state"] = "disabled"
+        frameButton.pack()
 
     def modifyCategory(self):
         index = self.lbx.curselection()
@@ -59,20 +66,29 @@ class ModifyCategoriesPopUp:
             self.lbx.select_set(index)
             self.my_text.delete(1.0, END)
 
+    def handle_focus_in(self):
+        self.my_text.delete(1.0, END)
+        self.my_text.config(fg='black')
+
+    def handle_focus_out(self):
+        self.my_text.delete(1.0, END)
+        self.my_text.config(fg='grey')
+        self.my_text.insert(1.0, "Type category... ")
+
     def addCategory(self):
         text = self.my_text.get(1.0,END).strip()
-        if text != "":
+        if text != "" and text != "Type category..." :
             self.lbx.insert(END,text)
             self.boxes.categories.append(text)
-        self.my_text.delete(1.0, END)
+            self.my_text.delete(1.0, END)
 
     def deleteCategory(self):
         index = self.lbx.curselection()
         if index != ():
-            print(index)
             self.boxes.categories.pop(index[0])
             self.lbx.delete(index)
             self.buttonDelete["state"] = "disabled"
+            self.buttonModify["state"] = "disabled"
 
     def onselect(self,evt):
         w = evt.widget
