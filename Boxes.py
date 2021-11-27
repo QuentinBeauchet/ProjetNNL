@@ -55,7 +55,7 @@ class Boxes:
         for box in self.boxes:
             box.draw()
 
-    def clear(self,event):
+    def clear(self):
         self.boxes.sort(reverse=True)
         for box1 in self.boxes:
             total = None

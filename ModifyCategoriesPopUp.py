@@ -4,6 +4,7 @@ class ModifyCategoriesPopUp:
     def __init__(self, canvas, boxes):
         self.boxes = boxes
         self.popup = Toplevel(canvas, borderwidth=3, relief="ridge")
+        self.popup.title('Modify Categories')
         self.popup.grab_set()
         self.popup.resizable(False, False)
         self.fr = Frame(self.popup)
@@ -18,7 +19,7 @@ class ModifyCategoriesPopUp:
         self.my_text.config(fg='grey')
         self.my_text.insert(1.0,"Type category... ")
         self.my_text.bind("<FocusIn>", lambda x=None:self.handle_focus_in())
-        #self.my_text.bind("<FocusOut>", lambda x=None: self.handle_focus_out())
+        self.my_text.bind("<FocusOut>", lambda x=None: self.handle_focus_out())
         # self.my_text.bind("<Return>", self.handle_enter)
 
         self.lbx.pack(side=LEFT, fill="both", expand=True)
@@ -60,20 +61,24 @@ class ModifyCategoriesPopUp:
     def modifyCategory(self):
         index = self.lbx.curselection()
         text = self.my_text.get(1.0,END).strip()
-        if text != "" and index != ():
+        if text != "" and text != "Type category..." and index != ():
             self.lbx.delete(index)
             self.lbx.insert(index,text)
             self.lbx.select_set(index)
             self.my_text.delete(1.0, END)
 
     def handle_focus_in(self):
-        self.my_text.delete(1.0, END)
-        self.my_text.config(fg='black')
+        text = self.my_text.get(1.0, END).strip()
+        if text == "" or text == "Type category...":
+            self.my_text.delete(1.0, END)
+            self.my_text.config(fg='black')
 
     def handle_focus_out(self):
-        self.my_text.delete(1.0, END)
-        self.my_text.config(fg='grey')
-        self.my_text.insert(1.0, "Type category... ")
+        text = self.my_text.get(1.0, END).strip()
+        if text == "" :
+            self.my_text.delete(1.0, END)
+            self.my_text.config(fg='grey')
+            self.my_text.insert(1.0, "Type category... ")
 
     def addCategory(self):
         text = self.my_text.get(1.0,END).strip()
