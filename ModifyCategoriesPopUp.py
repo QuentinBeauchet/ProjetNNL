@@ -4,6 +4,8 @@ class ModifyCategoriesPopUp:
     def __init__(self, canvas, boxes):
         self.boxes = boxes
         self.popup = Toplevel(canvas, borderwidth=3, relief="ridge")
+        self.popup.grab_set()
+        self.popup.resizable(False, False)
         self.fr = Frame(self.popup)
         self.fr.pack()
         self.my_text = Text(self.popup,width =20, height=1)
@@ -55,6 +57,7 @@ class ModifyCategoriesPopUp:
             self.lbx.delete(index)
             self.lbx.insert(index,text)
             self.lbx.select_set(index)
+            self.my_text.delete(1.0, END)
 
     def addCategory(self):
         text = self.my_text.get(1.0,END).strip()
@@ -66,20 +69,10 @@ class ModifyCategoriesPopUp:
     def deleteCategory(self):
         index = self.lbx.curselection()
         if index != ():
-            self.boxes.categories.remove(self.lbx.get(index))
+            print(index)
+            self.boxes.categories.pop(index[0])
             self.lbx.delete(index)
-
-    def popupModify(self):
-        if len(self.lbx.curselection()) == 1 :
-            self.w = popupWindow(self)
-            self.buttonModify["state"] = "disabled"
-            self.popup.wait_window(self.w.top)
-            if not(self.w.hasConfirmed) :
-                self.buttonModify["state"] = "normal"
-
-    def _update_listbox(self):
-        self.lb.delete(1)
-        self.lb.insert(1, time.asctime())
+            self.buttonDelete["state"] = "disabled"
 
     def onselect(self,evt):
         w = evt.widget
