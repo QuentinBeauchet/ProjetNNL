@@ -1,27 +1,5 @@
 from tkinter import *
 
-class popupWindow:
-    def __init__(self,modifyCategoriesClass):
-        top=self.top=Toplevel(modifyCategoriesClass.popup)
-        self.modifyCategoriesClass = modifyCategoriesClass
-        top.grab_set()
-        self.l=Label(top,text="Modifiez la catégorie :")
-        self.l.pack()
-        self.hasConfirmed = False
-        self.e = Entry(top)
-        self.indexItemSelect = self.modifyCategoriesClass.lbx.curselection()[0]
-        self.e.insert(END, self.modifyCategoriesClass.lbx.get(self.indexItemSelect))
-        self.e.bind('<Return>', lambda event : self.cleanup())
-        self.e.pack()
-        self.b=Button(top,text='CONFIRMER',command=self.cleanup)
-        self.b.pack()
-
-    def cleanup(self):
-        self.modifyCategoriesClass.lbx.delete(self.indexItemSelect)
-        self.modifyCategoriesClass.lbx.insert(self.indexItemSelect,self.e.get())
-        self.hasConfirmed = True
-        self.top.destroy()
-
 class ModifyCategoriesPopUp:
     def __init__(self, canvas, boxes):
         self.boxes = boxes
@@ -51,6 +29,7 @@ class ModifyCategoriesPopUp:
             command=lambda: self.deleteCategory()
         )
         self.buttonDelete.pack(side=LEFT)
+        self.buttonDelete["state"] = "disabled"
 
         self.buttonAdd = Button(
             self.popup,
@@ -64,10 +43,30 @@ class ModifyCategoriesPopUp:
             self.popup,
             text="Modify",
             font=("Verdana", 16),
-            command=lambda: self.popupModify()
+            command=lambda: self.modifyCategory()
         )
         self.buttonModify.pack(side=LEFT)
         self.buttonModify["state"] = "disabled"
+
+    def modifyCategory(self):
+        index = self.lbx.curselection()
+        text = self.my_text.get(1.0,END).strip()
+        if text != "" and index != ():
+            self.lbx.delete(index)
+            self.lbx.insert(index,text)
+            self.lbx.select_set(index)
+
+    def addCategory(self):
+        text = self.my_text.get(1.0,END).strip()
+        if text != "":
+            self.lbx.insert(END,text)
+            self.boxes.categories.append(text)
+
+    def deleteCategory(self):
+        index = self.lbx.curselection()
+        if index != ():
+            self.boxes.categories.remove(self.lbx.get(index))
+            self.lbx.delete(index)
 
     def popupModify(self):
         if len(self.lbx.curselection()) == 1 :
@@ -76,18 +75,6 @@ class ModifyCategoriesPopUp:
             self.popup.wait_window(self.w.top)
             if not(self.w.hasConfirmed) :
                 self.buttonModify["state"] = "normal"
-
-    def addCategory(self):
-        if not(str(self.my_text.get(1.0,END)).isspace()):
-            self.lbx.insert(0,self.my_text.get(1.0,END))
-            self.boxes.categories = self.lbx.get(0, END)
-        self.my_text.delete(1.0,END)
-
-    def deleteCategory(self):
-        sel = self.lbx.curselection()
-        for index in sel[::-1]:
-            self.lbx.delete(index)
-        self.boxes.categories = self.lbx.get(0, END)
 
     def _update_listbox(self):
         self.lb.delete(1)
@@ -98,5 +85,7 @@ class ModifyCategoriesPopUp:
         nbItemSelected = len(w.curselection())
         if nbItemSelected == 1:
             self.buttonModify["state"] = "normal"
+            self.buttonDelete["state"] = "normal"
         else :
             self.buttonModify["state"] = "disabled"
+            self.buttonDelete["state"] = "disabled"
