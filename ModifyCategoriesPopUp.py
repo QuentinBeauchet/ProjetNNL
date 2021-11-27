@@ -61,6 +61,7 @@ class ModifyCategoriesPopUp:
         if text != "":
             self.lbx.insert(END,text)
             self.boxes.categories.append(text)
+        self.my_text.delete(1.0, END)
 
     def deleteCategory(self):
         index = self.lbx.curselection()
