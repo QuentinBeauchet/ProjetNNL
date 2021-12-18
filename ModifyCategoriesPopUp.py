@@ -1,5 +1,6 @@
 from tkinter import *
 
+
 class ModifyCategoriesPopUp:
     def __init__(self, canvas, boxes):
         self.boxes = boxes
@@ -9,18 +10,18 @@ class ModifyCategoriesPopUp:
         self.popup.resizable(False, False)
         self.fr = Frame(self.popup)
         self.fr.pack()
-        self.my_text = Text(self.popup,width =20, height=1)
+        self.my_text = Text(self.popup, width=20, height=1)
         self.my_text.pack(pady=5)
-        self.lbx = Listbox(self.fr, width =20, selectmode = EXTENDED,font = ("Verdana",16))
+        self.lbx = Listbox(self.fr, width=20,
+                           selectmode=EXTENDED, font=("Verdana", 16))
         self.lbx.bind('<<ListboxSelect>>', self.onselect)
         self.categories = boxes.categories
 
-        self.my_text.bind('<Return>', lambda x=None:self.addCategory())
+        self.my_text.bind('<Return>', lambda x=None: self.addCategory())
         self.my_text.config(fg='grey')
-        self.my_text.insert(1.0,"Type category... ")
-        self.my_text.bind("<FocusIn>", lambda x=None:self.handle_focus_in())
+        self.my_text.insert(1.0, "Type category... ")
+        self.my_text.bind("<FocusIn>", lambda x=None: self.handle_focus_in())
         self.my_text.bind("<FocusOut>", lambda x=None: self.handle_focus_out())
-        # self.my_text.bind("<Return>", self.handle_enter)
 
         self.lbx.pack(side=LEFT, fill="both", expand=True)
         for i in range(len(self.categories)):
@@ -60,12 +61,13 @@ class ModifyCategoriesPopUp:
 
     def modifyCategory(self):
         index = self.lbx.curselection()
-        text = self.my_text.get(1.0,END).strip()
+        text = self.my_text.get(1.0, END).strip()
         if text != "" and text != "Type category..." and index != ():
             self.lbx.delete(index)
-            self.lbx.insert(index,text)
+            self.lbx.insert(index, text)
             self.lbx.select_set(index)
-            self.boxes.notifyCategoryModification(self.boxes.categories[index[0]],text)
+            self.boxes.notifyCategoryModification(
+                self.boxes.categories[index[0]], text)
             self.boxes.categories[index[0]] = text
             self.my_text.delete(1.0, END)
 
@@ -77,33 +79,32 @@ class ModifyCategoriesPopUp:
 
     def handle_focus_out(self):
         text = self.my_text.get(1.0, END).strip()
-        if text == "" :
+        if text == "":
             self.my_text.delete(1.0, END)
             self.my_text.config(fg='grey')
             self.my_text.insert(1.0, "Type category... ")
 
     def addCategory(self):
-        text = self.my_text.get(1.0,END).strip()
-        if text != "" and text != "Type category..." :
-            self.lbx.insert(END,text)
+        text = self.my_text.get(1.0, END).strip()
+        if text != "" and text != "Type category..." and not(text in self.boxes.categories):
+            self.lbx.insert(END, text)
             self.boxes.categories.append(text)
             self.my_text.delete(1.0, END)
 
     def deleteCategory(self):
         index = self.lbx.curselection()
-        if index != ():
+        if index != () and index[0] != 0:
             self.boxes.notifyCategoryDeletion(self.boxes.categories[index[0]])
             self.boxes.categories.pop(index[0])
             self.lbx.delete(index)
             self.buttonDelete["state"] = "disabled"
             self.buttonModify["state"] = "disabled"
 
-    def onselect(self,evt):
-        w = evt.widget
-        nbItemSelected = len(w.curselection())
-        if nbItemSelected == 1:
+    def onselect(self, event):
+        index = event.widget.curselection()
+        if index != () and index[0] != 0:
             self.buttonModify["state"] = "normal"
             self.buttonDelete["state"] = "normal"
-        else :
+        else:
             self.buttonModify["state"] = "disabled"
             self.buttonDelete["state"] = "disabled"
