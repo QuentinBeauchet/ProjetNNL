@@ -55,7 +55,7 @@ class ImageAnnotator:
         # Load
         self.menuFile.add_command(
             label="Save & Load image", accelerator="Ctrl+L", command=self.SaveAndloadImageFromMenu)
-        self.root.bind('<Control-l>', lambda _: self.loadImageFromMenu())
+        self.root.bind('<Control-l>', lambda _: self.SaveAndloadImageFromMenu())
         # Save Boxes
         self.menuFile.add_command(
             label="Save Boxes", accelerator="Ctrl+B", command=self.writeData)
