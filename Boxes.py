@@ -16,8 +16,7 @@ class Boxes:
         self.currentBox.click(event)
 
     def release(self, event):
-        if self.currentBox != None :
-            self.currentBox.update(event, 'black')
+        self.currentBox.update(event, 'black')
         if(self.currentBox.isValid()):
             self.boxes.append(self.currentBox)
             self.popUp()
