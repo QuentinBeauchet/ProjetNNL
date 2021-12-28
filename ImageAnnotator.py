@@ -22,12 +22,12 @@ class ImageAnnotator:
         if(len(self.imgPath) == 0):
             return
         self.root.deiconify()
-
         self.loadImage()
         self.boxes = Boxes(self.canvas)
+        data = pd.read_csv('settings/categories.csv')
+        self.boxes.categories = data.iloc[:, 1].tolist()
         self.setMenu()
         self.setBinds()
-
         self.root.mainloop()
 
     def loadImage(self):
@@ -38,15 +38,22 @@ class ImageAnnotator:
         self.canvas.pack()
         self.root.eval('tk::PlaceWindow . center')
 
+    def loadImageFromMenu(self):
+        self.root.destroy()
+        ImageAnnotator()
+
     def setMenu(self):
         self.menu = Menu(self.root)
-
         # File
         self.menuFile = Menu(self.menu, tearoff=0)
         # Save All
         self.menuFile.add_command(
             label="Save All", accelerator="Ctrl+S", command=self.save)
         self.root.bind('<Control-s>', lambda _: self.save())
+        # Load
+        self.menuFile.add_command(
+            label="Load image", accelerator="Ctrl+L", command=self.loadImageFromMenu)
+        self.root.bind('<Control-l>', lambda _: self.loadImageFromMenu())
         # Save Boxes
         self.menuFile.add_command(
             label="Save Boxes", accelerator="Ctrl+B", command=self.writeData)
@@ -171,7 +178,7 @@ class ImageAnnotator:
         messagebox.showinfo("Controls Help", "Left click to add a box\nRight click to select a box\n")
 
     def shortcuts_help(self):
-        messagebox.showinfo("Shortcuts List", "Ctrl+S: Save All\nCtrl+B: Save box\nCtrl+K: Save Categories\nCtrl+I: Import Boxes\nCtrl+O: Import Categories\nCtrl+M: Modify Categories\nCtrl+R: Resolve conflicts\nCtrl+H: Controls Help\nCtrl+X: Shortcuts Help\nCtrl+N: How conflicts work\nCtrl+P: How to use categories\n")
+        messagebox.showinfo("Shortcuts List", "Ctrl+S: Save All\nCtrl+L: Load Image\nCtrl+B: Save box\nCtrl+K: Save Categories\nCtrl+I: Import Boxes\nCtrl+O: Import Categories\nCtrl+M: Modify Categories\nCtrl+R: Resolve conflicts\nCtrl+H: Controls Help\nCtrl+X: Shortcuts Help\nCtrl+N: How conflicts work\nCtrl+P: How to use categories\n")
 
     def conflicts_help(self):
         messagebox.showinfo("How we resolve conflicts", "If a box englobed an other box then we remove the box that is enclosed\nIf the intersection of two boxes take more than 20% of the area of the first box, the first box will be removed\n")
