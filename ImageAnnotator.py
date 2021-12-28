@@ -82,19 +82,19 @@ class ImageAnnotator:
 
         # Help
         self.menuHelp = Menu(self.menu, tearoff=0)
-        #Controls
+        # Controls
         self.menuHelp.add_command(
             label="Controls", accelerator="Ctrl+H", command=self.controls_help)
         self.root.bind('<Control-h>', lambda _: self.controls_help())
-        #Shortcuts
+        # Shortcuts
         self.menuHelp.add_command(
             label="Shortcuts", accelerator="Ctrl+X", command=self.shortcuts_help)
         self.root.bind('<Control-x>', lambda _: self.shortcuts_help())
-        #How conflicts work
+        # How conflicts work
         self.menuHelp.add_command(
             label="How conflicts work", accelerator="Ctrl+N", command=self.conflicts_help)
         self.root.bind('<Control-n>', lambda _: self.conflicts_help())
-        #How to use categories
+        # How to use categories
         self.menuHelp.add_command(
             label="How use categories", accelerator="Ctrl+P", command=self.categories_help)
         self.root.bind('<Control-p>', lambda _: self.categories_help())
@@ -170,15 +170,18 @@ class ImageAnnotator:
                 self.boxes.addBox(boxe[0], boxe[1], boxe[2], boxe[3], boxe[4])
 
     def controls_help(self):
-        messagebox.showinfo("Controls Help", "Left click to add a box\nRight click to select a box\n")
+        messagebox.showinfo(
+            "Controls Help", "Left click to add a box\nRight click to select a box\n")
 
     def shortcuts_help(self):
         messagebox.showinfo("Shortcuts List", "Ctrl+S: Save All\nCtrl+B: Save box\nCtrl+K: Save Categories\nCtrl+I: Import Boxes\nCtrl+O: Import Categories\nCtrl+M: Modify Categories\nCtrl+R: Resolve conflicts\nCtrl+H: Controls Help\nCtrl+X: Shortcuts Help\nCtrl+N: How conflicts work\nCtrl+P: How to use categories\n")
 
     def conflicts_help(self):
-        messagebox.showinfo("How we resolve conflicts", "If a box englobed an other box then we remove the box that is enclosed\nIf the intersection of two boxes take more than 20% of the area of the first box, the first box will be removed\n")
-    
+        messagebox.showinfo("How we resolve conflicts",
+                            "If a box englobed an other box then we remove the box that is enclosed\nIf the intersection of two boxes take more than 20% of the area of the first box, the first box will be removed\n")
+
     def categories_help(self):
         messagebox.showinfo("How use categories", "You can add and delete categories with the menu (Ctrl+M)\nYou can import and save categories with the menu (Ctrl+I, Ctrl+K)\nTo apply a category to a box, just right click on the box and select your category at the list\nTo remove a category from a box , just right click on the box and select 'None' at the list\nYou can also apply categorie when you make the box\n")
-        
+
+
 ImageAnnotator()
