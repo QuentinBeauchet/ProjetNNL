@@ -117,15 +117,19 @@ class ImageAnnotator:
         self.root.bind('<B1-Motion>', self.boxes.move)
         self.root.bind('<Button-3>', self.boxes.change)
 
+
     def popUpCategories(self):
+        """Fonction appelé lorsque l'utilisateur clique sur Edit -> Modify Categories"""
         ModifyCategoriesPopUp(self.canvas, self.boxes)
 
     def save(self):
+        """Fonction appelé lorsque l'utilisateur clique sur File -> Save All ou Save & Load Image"""
         self.saveImages()
         self.writeData()
         self.writeCategories()
 
     def saveImages(self):
+        """Sauvegarde l'image des boxes annotés"""
         img = cv2.imread(self.imgPath)
         folderPath = os.path.join('outputs', self.imgName, "")
         if len(self.boxes.boxes) > 0:
@@ -138,6 +142,7 @@ class ImageAnnotator:
             cv2.imwrite(folderPath + f"{i}.png", crop_img)
 
     def writeData(self):
+        """Sauvegarde les coordonnées des boxes"""
         jsonArray = []
         for box in self.boxes.boxes:
             x1, y1, x2, y2 = box.coords()
@@ -148,11 +153,13 @@ class ImageAnnotator:
         df.to_csv(f'settings/{self.imgName}.csv')
 
     def writeCategories(self):
+        """Sauvegarde les categories"""
         df = pd.DataFrame(self.boxes.categories, columns=["Categories"])
         df.to_json('settings/categories.json', orient='records')
         df.to_csv('settings/categories.csv')
 
     def importCategories(self):
+        """Import les catégories"""
         filePath = askopenfilename(initialdir="./settings/", initialfile="categories",
                                    filetypes=[("CSV or JSON Files", ".csv .json")])
         if(len(filePath) == 0):
@@ -165,6 +172,7 @@ class ImageAnnotator:
             self.boxes.categories = data.iloc[:, 0].tolist()
 
     def importBoxes(self):
+        """Import les boxes"""
         filePath = askopenfilename(initialdir="./settings/", initialfile=f"{self.imgName}",
                                    filetypes=[("CSV or JSON Files", ".csv .json")])
         if(len(filePath) == 0):
