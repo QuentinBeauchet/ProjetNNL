@@ -19,6 +19,7 @@ class ImageAnnotator:
             initialdir="./inputs/", filetypes=[("Images", ".png .jpg")])
         if(len(self.imgPath) == 0):
             return
+        self.imgName = os.path.basename(self.imgPath).split(".")[0]
         self.root.deiconify()
 
         self.loadImage()
@@ -100,13 +101,14 @@ class ImageAnnotator:
 
     def saveImages(self):
         img = cv2.imread(self.imgPath)
-        folderPath = os.path.join(
-            'outputs', os.path.basename(self.imgPath).split(".")[0])
+        folderPath = os.path.join('outputs', self.imgName, "")
+        if len(self.boxes.boxes) > 0:
+            os.mkdir(folderPath)
         for i in range(len(self.boxes.boxes)):
             x1, y1, x2, y2 = self.boxes.boxes[i].coords()
             crop_img = img[int(min(y1, y2)):int(max(y1, y2)), int(
                 min(x1, x2)):int(max(x1, x2))].copy()
-            cv2.imwrite(folderPath + "_" + f"{i}.png", crop_img)
+            cv2.imwrite(folderPath + f"{i}.png", crop_img)
 
     def writeData(self):
         jsonArray = []
@@ -115,8 +117,8 @@ class ImageAnnotator:
             jsonArray.append({"x1": x1, "x2": x2, "y1": y1,
                              "y2": y2, "categories": box.categorie})
         df = pd.DataFrame(jsonArray)
-        df.to_json('settings/data.json', orient='records')
-        df.to_csv('settings/data.csv')
+        df.to_json(f'settings/{self.imgName}.json', orient='records')
+        df.to_csv(f'settings/{self.imgName}.csv')
 
     def writeCategories(self):
         df = pd.DataFrame(self.boxes.categories, columns=["Categories"])
@@ -136,7 +138,7 @@ class ImageAnnotator:
             self.boxes.categories = data.iloc[:, 0].tolist()
 
     def importBoxes(self):
-        filePath = askopenfilename(initialdir="./settings/", initialfile="data",
+        filePath = askopenfilename(initialdir="./settings/", initialfile=f"{self.imgName}",
                                    filetypes=[("CSV or JSON Files", ".csv .json")])
         if(len(filePath) == 0):
             return
