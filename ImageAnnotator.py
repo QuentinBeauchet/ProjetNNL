@@ -129,7 +129,8 @@ class ImageAnnotator:
         img = cv2.imread(self.imgPath)
         folderPath = os.path.join('outputs', self.imgName, "")
         if len(self.boxes.boxes) > 0:
-            os.mkdir(folderPath)
+            if not (os.path.exists(folderPath) and os.path.isdir(folderPath)):
+                os.mkdir(folderPath)
         for i in range(len(self.boxes.boxes)):
             x1, y1, x2, y2 = self.boxes.boxes[i].coords()
             crop_img = img[int(min(y1, y2)):int(max(y1, y2)), int(
