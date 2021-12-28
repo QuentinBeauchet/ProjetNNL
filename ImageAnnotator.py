@@ -21,6 +21,7 @@ class ImageAnnotator:
             initialdir="./inputs/", filetypes=[("Images", ".png .jpg")])
         if(len(self.imgPath) == 0):
             return
+        self.imgName = os.path.basename(self.imgPath).split(".")[0]
         self.root.deiconify()
         self.loadImage()
         self.boxes = Boxes(self.canvas)
@@ -88,19 +89,19 @@ class ImageAnnotator:
 
         # Help
         self.menuHelp = Menu(self.menu, tearoff=0)
-        #Controls
+        # Controls
         self.menuHelp.add_command(
             label="Controls", accelerator="Ctrl+H", command=self.controls_help)
         self.root.bind('<Control-h>', lambda _: self.controls_help())
-        #Shortcuts
+        # Shortcuts
         self.menuHelp.add_command(
             label="Shortcuts", accelerator="Ctrl+X", command=self.shortcuts_help)
         self.root.bind('<Control-x>', lambda _: self.shortcuts_help())
-        #How conflicts work
+        # How conflicts work
         self.menuHelp.add_command(
             label="How conflicts work", accelerator="Ctrl+N", command=self.conflicts_help)
         self.root.bind('<Control-n>', lambda _: self.conflicts_help())
-        #How to use categories
+        # How to use categories
         self.menuHelp.add_command(
             label="How use categories", accelerator="Ctrl+P", command=self.categories_help)
         self.root.bind('<Control-p>', lambda _: self.categories_help())
@@ -125,13 +126,14 @@ class ImageAnnotator:
 
     def saveImages(self):
         img = cv2.imread(self.imgPath)
-        folderPath = os.path.join(
-            'outputs', os.path.basename(self.imgPath).split(".")[0])
+        folderPath = os.path.join('outputs', self.imgName, "")
+        if len(self.boxes.boxes) > 0:
+            os.mkdir(folderPath)
         for i in range(len(self.boxes.boxes)):
             x1, y1, x2, y2 = self.boxes.boxes[i].coords()
             crop_img = img[int(min(y1, y2)):int(max(y1, y2)), int(
                 min(x1, x2)):int(max(x1, x2))].copy()
-            cv2.imwrite(folderPath + "_" + f"{i}.png", crop_img)
+            cv2.imwrite(folderPath + f"{i}.png", crop_img)
 
     def writeData(self):
         jsonArray = []
@@ -140,8 +142,8 @@ class ImageAnnotator:
             jsonArray.append({"x1": x1, "x2": x2, "y1": y1,
                              "y2": y2, "categories": box.categorie})
         df = pd.DataFrame(jsonArray)
-        df.to_json('settings/data.json', orient='records')
-        df.to_csv('settings/data.csv')
+        df.to_json(f'settings/{self.imgName}.json', orient='records')
+        df.to_csv(f'settings/{self.imgName}.csv')
 
     def writeCategories(self):
         df = pd.DataFrame(self.boxes.categories, columns=["Categories"])
@@ -161,7 +163,7 @@ class ImageAnnotator:
             self.boxes.categories = data.iloc[:, 0].tolist()
 
     def importBoxes(self):
-        filePath = askopenfilename(initialdir="./settings/", initialfile="data",
+        filePath = askopenfilename(initialdir="./settings/", initialfile=f"{self.imgName}",
                                    filetypes=[("CSV or JSON Files", ".csv .json")])
         if(len(filePath) == 0):
             return
@@ -175,15 +177,18 @@ class ImageAnnotator:
                 self.boxes.addBox(boxe[0], boxe[1], boxe[2], boxe[3], boxe[4])
 
     def controls_help(self):
-        messagebox.showinfo("Controls Help", "Left click to add a box\nRight click to select a box\n")
+        messagebox.showinfo(
+            "Controls Help", "Left click to add a box\nRight click to select a box\n")
 
     def shortcuts_help(self):
         messagebox.showinfo("Shortcuts List", "Ctrl+S: Save All\nCtrl+L: Load Image\nCtrl+B: Save box\nCtrl+K: Save Categories\nCtrl+I: Import Boxes\nCtrl+O: Import Categories\nCtrl+M: Modify Categories\nCtrl+R: Resolve conflicts\nCtrl+H: Controls Help\nCtrl+X: Shortcuts Help\nCtrl+N: How conflicts work\nCtrl+P: How to use categories\n")
 
     def conflicts_help(self):
-        messagebox.showinfo("How we resolve conflicts", "If a box englobed an other box then we remove the box that is enclosed\nIf the intersection of two boxes take more than 20% of the area of the first box, the first box will be removed\n")
-    
+        messagebox.showinfo("How we resolve conflicts",
+                            "If a box englobed an other box then we remove the box that is enclosed\nIf the intersection of two boxes take more than 20% of the area of the first box, the first box will be removed\n")
+
     def categories_help(self):
         messagebox.showinfo("How use categories", "You can add and delete categories with the menu (Ctrl+M)\nYou can import and save categories with the menu (Ctrl+I, Ctrl+K)\nTo apply a category to a box, just right click on the box and select your category at the list\nTo remove a category from a box , just right click on the box and select 'None' at the list\nYou can also apply categorie when you make the box\n")
-        
+
+
 ImageAnnotator()
