@@ -1,7 +1,8 @@
 from tkinter import *
 
-
 class ModifyCategoriesPopUp:
+    """Cette classe gère la fenêtre qui s'affiche lorsqu'on clique sur Edit -> Modify Categories"""
+
     def __init__(self, canvas, boxes):
         self.boxes = boxes
         self.popup = Toplevel(canvas, borderwidth=3, relief="ridge")
@@ -13,7 +14,7 @@ class ModifyCategoriesPopUp:
         self.my_text = Text(self.popup, width=20, height=1)
         self.my_text.pack(pady=5)
         self.lbx = Listbox(self.fr, width=20,
-                           selectmode=EXTENDED, font=("Verdana", 16))
+                           selectmode=BROWSE, font=("Verdana", 16))
         self.lbx.bind('<<ListboxSelect>>', self.onselect)
         self.categories = boxes.categories
 
@@ -59,7 +60,10 @@ class ModifyCategoriesPopUp:
         self.buttonModify["state"] = "disabled"
         frameButton.pack()
 
+
     def modifyCategory(self):
+        """Fonction executé lorsque l'utilisateur appuie sur le bouton Modify.
+        Remplace la catégorie choisit par la nouvelle catégorie rentré"""
         index = self.lbx.curselection()
         text = self.my_text.get(1.0, END).strip()
         if text != "" and text != "Type category..." and index != ():
@@ -72,12 +76,14 @@ class ModifyCategoriesPopUp:
             self.my_text.delete(1.0, END)
 
     def handle_focus_in(self):
+        """Supprime "Type category..." lorsque l'utilisateur clique dans l'Entry Text"""
         text = self.my_text.get(1.0, END).strip()
         if text == "" or text == "Type category...":
             self.my_text.delete(1.0, END)
             self.my_text.config(fg='black')
 
     def handle_focus_out(self):
+        """Ajoute "Type category..." si l'utilisateur clique ailleurs que dans l'Entry Text et que l'Entry est vide"""
         text = self.my_text.get(1.0, END).strip()
         if text == "":
             self.my_text.delete(1.0, END)
@@ -85,6 +91,8 @@ class ModifyCategoriesPopUp:
             self.my_text.insert(1.0, "Type category... ")
 
     def addCategory(self):
+        """Fonction executé lorsque l'utilisateur appuie sur le bouton Add.
+        Ajoute la catégorie rentré"""
         text = self.my_text.get(1.0, END).strip()
         if text != "" and text != "Type category..." and not(text in self.boxes.categories):
             self.lbx.insert(END, text)
@@ -92,6 +100,8 @@ class ModifyCategoriesPopUp:
             self.my_text.delete(1.0, END)
 
     def deleteCategory(self):
+        """Fonction executé lorsque l'utilisateur appuie sur le bouton Delete.
+        Supprime la catégorie rentré"""
         index = self.lbx.curselection()
         if index != () and index[0] != 0:
             self.boxes.notifyCategoryDeletion(self.boxes.categories[index[0]])
@@ -101,6 +111,7 @@ class ModifyCategoriesPopUp:
             self.buttonModify["state"] = "disabled"
 
     def onselect(self, event):
+        """Désactive ou active les boutons selon ce qui est selectionné."""
         index = event.widget.curselection()
         if index != () and index[0] != 0:
             self.buttonModify["state"] = "normal"
