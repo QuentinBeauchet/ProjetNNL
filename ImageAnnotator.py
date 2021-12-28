@@ -39,7 +39,8 @@ class ImageAnnotator:
         self.canvas.pack()
         self.root.eval('tk::PlaceWindow . center')
 
-    def loadImageFromMenu(self):
+    def SaveAndloadImageFromMenu(self):
+        self.save()
         self.root.destroy()
         ImageAnnotator()
 
@@ -53,7 +54,7 @@ class ImageAnnotator:
         self.root.bind('<Control-s>', lambda _: self.save())
         # Load
         self.menuFile.add_command(
-            label="Load image", accelerator="Ctrl+L", command=self.loadImageFromMenu)
+            label="Save & Load image", accelerator="Ctrl+L", command=self.SaveAndloadImageFromMenu)
         self.root.bind('<Control-l>', lambda _: self.loadImageFromMenu())
         # Save Boxes
         self.menuFile.add_command(
@@ -181,7 +182,7 @@ class ImageAnnotator:
             "Controls Help", "Left click to add a box\nRight click to select a box\n")
 
     def shortcuts_help(self):
-        messagebox.showinfo("Shortcuts List", "Ctrl+S: Save All\nCtrl+L: Load Image\nCtrl+B: Save box\nCtrl+K: Save Categories\nCtrl+I: Import Boxes\nCtrl+O: Import Categories\nCtrl+M: Modify Categories\nCtrl+R: Resolve conflicts\nCtrl+H: Controls Help\nCtrl+X: Shortcuts Help\nCtrl+N: How conflicts work\nCtrl+P: How to use categories\n")
+        messagebox.showinfo("Shortcuts List", "Ctrl+S: Save All\nCtrl+L: Save & Load image\nCtrl+B: Save box\nCtrl+K: Save Categories\nCtrl+I: Import Boxes\nCtrl+O: Import Categories\nCtrl+M: Modify Categories\nCtrl+R: Resolve conflicts\nCtrl+H: Controls Help\nCtrl+X: Shortcuts Help\nCtrl+N: How conflicts work\nCtrl+P: How to use categories\n")
 
     def conflicts_help(self):
         messagebox.showinfo("How we resolve conflicts",
