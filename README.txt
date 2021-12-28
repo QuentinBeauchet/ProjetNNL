@@ -1,4 +1,12 @@
-Executer ImageAnnotator pour lancer l’Image Annotation System.
+---PARTICIPANTS---
+
+JULIEN Raphaël, BEAUCHET Quentin, KOUYOUMDJIAN Pierre
+
+---EXECUTION---
+
+Éxécutez ImageAnnotator pour lancer l’Image Annotation System.
+
+---QUELQUES PRECISIONS---	
 
 Les images sont chargé à partir du dossier input.
 Les images des boxes sont save dans le dossier output.
