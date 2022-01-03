@@ -22,11 +22,18 @@ class ImageAnnotator:
         if(len(self.imgPath) == 0):
             return
         self.imgName = os.path.basename(self.imgPath).split(".")[0]
+        if not os.path.exists("settings"):
+            os.mkdir("settings")
+        if not os.path.exists("outputs"):
+            os.mkdir("outputs")
         self.root.deiconify()
         self.loadImage()
         self.boxes = Boxes(self.canvas)
-        data = pd.read_csv('settings/categories.csv')
-        self.boxes.categories = data.iloc[:, 1].tolist()
+        try:
+            data = pd.read_csv('settings/categories.csv')
+            self.boxes.categories = data.iloc[:, 1].tolist()
+        except FileNotFoundError:
+            pass
         self.setMenu()
         self.setBinds()
         self.root.mainloop()
@@ -55,7 +62,8 @@ class ImageAnnotator:
         # Load
         self.menuFile.add_command(
             label="Save & Load image", accelerator="Ctrl+L", command=self.SaveAndloadImageFromMenu)
-        self.root.bind('<Control-l>', lambda _: self.SaveAndloadImageFromMenu())
+        self.root.bind(
+            '<Control-l>', lambda _: self.SaveAndloadImageFromMenu())
         # Save Boxes
         self.menuFile.add_command(
             label="Save Boxes", accelerator="Ctrl+B", command=self.writeData)
@@ -117,7 +125,6 @@ class ImageAnnotator:
         self.root.bind('<B1-Motion>', self.boxes.move)
         self.root.bind('<Button-3>', self.boxes.change)
 
-
     def popUpCategories(self):
         """Fonction appelé lorsque l'utilisateur clique sur Edit -> Modify Categories"""
         ModifyCategoriesPopUp(self.canvas, self.boxes)
@@ -131,15 +138,19 @@ class ImageAnnotator:
     def saveImages(self):
         """Sauvegarde l'image des boxes annotés"""
         img = cv2.imread(self.imgPath)
-        folderPath = os.path.join('outputs', self.imgName, "")
-        if len(self.boxes.boxes) > 0:
+        for i in range(len(self.boxes.boxes)):
+            box = self.boxes.boxes[i]
+            folderPath = os.path.join(
+                'outputs', box.categorie, "")
             if not (os.path.exists(folderPath) and os.path.isdir(folderPath)):
                 os.mkdir(folderPath)
-        for i in range(len(self.boxes.boxes)):
-            x1, y1, x2, y2 = self.boxes.boxes[i].coords()
-            crop_img = img[int(min(y1, y2)):int(max(y1, y2)), int(
-                min(x1, x2)):int(max(x1, x2))].copy()
-            cv2.imwrite(folderPath + f"{i}.png", crop_img)
+
+            x1, y1, x2, y2 = box.coords()
+            top, bottom, left, right = int(min(y1, y2)), int(
+                max(y1, y2)), int(min(x1, x2)), int(max(x1, x2))
+            crop_img = img[top:bottom, left:right].copy()
+            cv2.imwrite(
+                folderPath + f"{self.imgName}-bb-{left}x{top}-{right-left}-{bottom-top}.png", crop_img)
 
     def writeData(self):
         """Sauvegarde les coordonnées des boxes"""
