@@ -11,3 +11,7 @@ JULIEN Raphaël, BEAUCHET Quentin, KOUYOUMDJIAN Pierre
 Les images sont chargé à partir du dossier input.
 Les images des boxes sont save dans le dossier output.
 Les catégories et les boxes sont saves dans le dossier settings.
+
+---PREDICTION---
+
+Elle se fait depuis le fichier Jupyter Prediction.ipynb
