@@ -1,20 +1,23 @@
-from Models import ClassificationModel, evaluate
+from Models import ClassificationModel, evaluate, predict
 from Models import LocalisationModel
 import matplotlib.pyplot as plt
 import cv2
 
 
 if __name__ == "__main__":
+    predict("images/maksssksksss17.png", mode="categories")
+    """
     Cmodel = ClassificationModel()
     Cmodel.loadData()
     Cmodel.loadModel()
+    # Cmodel.train(epochs=200)
     evaluate(Cmodel)
 
     Lmodel = LocalisationModel()
     # Lmodel.extractData()
     Lmodel.loadData()
     Lmodel.loadModel()
-    Lmodel.train(epochs=500)
+    # Lmodel.train(epochs=500)
     # Lmodel.loadModel()
     evaluate(Lmodel)
 
@@ -35,3 +38,4 @@ if __name__ == "__main__":
                               predictions[0]:predictions[2]], (120, 120))
 
         print(Cmodel.predict(crop))
+    """
